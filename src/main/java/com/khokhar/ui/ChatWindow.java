@@ -31,9 +31,9 @@ public class ChatWindow extends JFrame {
         mainPannel=new JPanel(new BorderLayout(10,10));
         mainPannel.setBorder(new EmptyBorder(10,10,10,10));
         if(appMode==AppMode.HOST){
-            setTitle("LocalChat|Server");
+            setTitle("LocalChat v1.1|Server");
         }else{
-            setTitle("LocalChat|Client: "+controller.getUsername());
+            setTitle("LocalChat v1.1|Client: "+controller.getUsername());
         }
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(500, 600);

@@ -1,9 +1,6 @@
 package com.khokhar;
 
-import com.khokhar.Service.ServiceAnnouncer;
-import com.khokhar.Service.ServiceDiscoverer;
-import com.khokhar.Service.SocClient;
-import com.khokhar.Service.SocServer;
+import com.khokhar.Service.*;
 import com.khokhar.ui.ChatWindow;
 import com.khokhar.ui.StartupWin;
 
@@ -11,10 +8,16 @@ import javax.jmdns.ServiceInfo;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class ViewModel {
+    ArrayList<Adaptor> adaptors;
+    InetAddress selectedAdaptor;
     String username;
     String connectedServerName;
     ChatWindow view;
@@ -25,16 +28,23 @@ public class ViewModel {
     ServiceDiscoverer discoveryService;
     ServiceAnnouncer broadcaster;
     SocClient clientManager;
-    public ViewModel(AppMode appMode){
-        this.appMode=appMode;
+    public ViewModel(){
+        adaptors= NetwoekInterfaces.getAdaptors();
     }
+    public ArrayList<Adaptor> getAdaptors(){
+        return adaptors;
+    }
+    public void setSelectedAdaptor(Adaptor selectedItem) {
+        selectedAdaptor=selectedItem.getAddress();
+    }
+//    public ViewModel(AppMode appMode){
+//        this.appMode=appMode;
+//    }
     public void startDiscovery() {
         discoveredServers=new DefaultListModel<ServiceInfo>();
         try{
-        discoveryService=new ServiceDiscoverer(InetAddress.getLocalHost(),this);
+        discoveryService=new ServiceDiscoverer(selectedAdaptor,this);
         discoveryService.startDiscovery();
-        } catch (UnknownHostException e) {
-            System.out.println("failed to get local address");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -85,7 +95,7 @@ public class ViewModel {
         }else{
             serverSocket.broadcastMessage(username+": "+msg);
         }
-        //send this to server or other
+
     }
 
     public void onMessageReceived(String serverResponse) {
@@ -106,7 +116,7 @@ public class ViewModel {
     }
 
     public boolean startHosting() {
-        broadcaster=new ServiceAnnouncer(username);
+        broadcaster=new ServiceAnnouncer(username,selectedAdaptor);
         if(broadcaster.startBroadcasting()){
             view=new ChatWindow(appMode,this);
             serverSocket=new SocServer(this);
@@ -135,4 +145,10 @@ public class ViewModel {
     public void stopDiscovery() {
         discoveryService.stopDiscovery();
     }
+
+    public void setAppMode(AppMode appMode) {
+        this.appMode=appMode;
+    }
+
+
 }

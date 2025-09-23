@@ -13,17 +13,9 @@ public class ServiceAnnouncer {
     private final String SERVICE_TYPE = "_mychat._tcp.local.";
     private InetAddress inetaddress;
 
-    public ServiceAnnouncer(String serviceName,InetAddress inetAddress, int port) {
+    public ServiceAnnouncer(String serviceName,InetAddress inetAddress) {
         this.inetaddress=inetAddress;
-        // Create the service information
-        this.serviceInfo = ServiceInfo.create(SERVICE_TYPE, serviceName, port, "A local chat server.");
-    }
-    public ServiceAnnouncer(String serName){
-        try {
-            InetAddress address=InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-        }
-        this.serviceInfo = ServiceInfo.create(SERVICE_TYPE, serName, 5353, "A local chat server.");
+        this.serviceInfo = ServiceInfo.create(SERVICE_TYPE, serviceName, 5353, "A local chat server.");
     }
 
     public boolean startBroadcasting() {
