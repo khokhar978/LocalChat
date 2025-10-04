@@ -7,14 +7,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.SQLOutput;
 
 public class Receiver implements Runnable {
     private final Socket clientSocket;
-    private ViewModel controller;
+    private SocClient clienManager;
 
-    public Receiver(Socket socket, ViewModel viewModel) {
+    public Receiver(Socket socket, SocClient clienManager) {
         this.clientSocket = socket;
-        controller=viewModel;
+        this.clienManager=clienManager;
     }
 
     @Override
@@ -24,13 +25,13 @@ public class Receiver implements Runnable {
             String serverResponse;
 
             while ((serverResponse = in.readLine()) != null) {
-                controller.onMessageReceived(serverResponse);
+                clienManager.OnResponseReceived(serverResponse);
             }
-            controller.onDisconnect();
+            in.close();
+            clienManager.onDisconnect();
         } catch (SocketException e) {
         } catch (IOException e) {
-            controller.onDisconnect();
-            System.out.println("An error occurred in the receiver: " + e.getMessage());
+            clienManager.onDisconnect();
         }
     }
 }

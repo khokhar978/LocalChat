@@ -12,7 +12,7 @@ public class StartupWin extends JFrame {
     public StartupWin() {
         ViewModel controller=new ViewModel();
 
-        setTitle("Chat Launcher v1.1");
+        setTitle("Chat Launcher v2.0");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
         //main pannel

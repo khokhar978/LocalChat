@@ -11,6 +11,7 @@ public class ClientHandler implements Runnable{
     private Socket s;
     String clientUsername;
     private SocServer serverSocket;
+    private boolean duplicateName;
 
     public ClientHandler(PrintWriter writer,Socket socket,SocServer serverManager){
         this.out=writer;
@@ -24,14 +25,22 @@ public class ClientHandler implements Runnable{
             BufferedReader reader=new BufferedReader(new InputStreamReader(s.getInputStream()));
             String msg= reader.readLine();
             clientUsername=msg;
-            serverSocket.onUsernameReceived(msg);
-            while((msg=reader.readLine())!=null){
-                serverSocket.broadcastMessage(msg);
+            duplicateName=serverSocket.onUsernameReceived(msg,out);
+            if(duplicateName){
+                while((msg=reader.readLine())!=null){
+                    if(!serverSocket.onMessageReceived(msg)){
+                        out.println("/CHAT:Error in message");
+                    }
+                }
+            }else{
+                serverSocket.removeClient(clientUsername,s);// just remove the socket and writer as username already exists
             }
             reader.close();
         } catch (IOException e) {
         }finally{
-            serverSocket.removeClient(out,s,clientUsername);
+            if (duplicateName){// remove client username only if it was successfully connected
+                serverSocket.removeClient(out,s,clientUsername);
+            }
             try {
                 s.close();
             } catch (IOException e) {

@@ -2,6 +2,7 @@ package com.khokhar.ui;
 
 import javax.jmdns.ServiceInfo;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class ServiceInfoRenderer extends JLabel implements ListCellRenderer<ServiceInfo> {
@@ -9,6 +10,8 @@ public class ServiceInfoRenderer extends JLabel implements ListCellRenderer<Serv
     public ServiceInfoRenderer() {
         // This is crucial for ensuring the background color is painted.
         setOpaque(true);
+        setBorder(new EmptyBorder(5, 10, 5, 10));
+
     }
 
     @Override
@@ -20,7 +23,7 @@ public class ServiceInfoRenderer extends JLabel implements ListCellRenderer<Serv
 
         // Set the text of the JLabel to be just the service name
         if (value != null) {
-            String txt=value.getName()+" | "+value.getHostAddress();
+            String txt=value.getName()+"  |  "+value.getHostAddress();
             setText(txt);
         } else {
             setText("");
